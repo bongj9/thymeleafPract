@@ -1,7 +1,9 @@
 package hello.thymeleaf.basic;
 
 
+import jakarta.servlet.http.HttpSession;
 import lombok.Data;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,16 +18,16 @@ import java.util.Map;
 @RequestMapping("/basic")
 public class BasicController {
 
-    @GetMapping("text-basic")
+    @GetMapping("/text-basic")
     public String textBasic(Model model) {
         model.addAttribute("data", "Hello Spring!");
-        return "/basic/text-basic";
+        return "basic/text-basic";
     }
 
-    @GetMapping("text-unescaped")
+    @GetMapping("/text-unescaped")
     public String textUnescaped(Model model) {
         model.addAttribute("data", "Hello Spring!");
-        return "/basic/text-unescaped";
+        return "basic/text-unescaped";
     }
 
     @GetMapping("/variable")
@@ -38,8 +40,8 @@ public class BasicController {
         list.add(userB);
 
         Map<String, User> map = new HashMap<>();
-        map.put("UserA", userA);
-        map.put("UserB", userB);
+        map.put("userA", userA);
+        map.put("userB", userB);
 
         model.addAttribute("user", userA);
         model.addAttribute("users", list);
@@ -48,15 +50,27 @@ public class BasicController {
         return "basic/variable";
     }
 
-    @Data
-    static class User{
-        private String username;
-        private int age;
+    @GetMapping("/basic-objects")
+    public String basicObjects(HttpSession session) {
+        session.setAttribute("sessionData", "Hello Session");
+        return "basic/basic-objects";
+    }
 
-        private User(String username, int age) {
-            this.username;
-            this.age;
+    @Component("helloBean")
+    static class HelloBean {
+        public String hello(String data) {
+            return "Hello" + data;
         }
     }
 
+    @Data
+    static class User {
+        private String username;
+        private int age;
+
+        public User(String username, int age) {
+            this.username = username;
+            this.age = age;
+        }
+    }
 }
